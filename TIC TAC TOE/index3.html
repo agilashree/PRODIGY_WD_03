@@ -1,1 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="game-board">
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+        </div>
+        <div class="message" id="winningMessage">
+            <div id="winningMessageText"></div>
+            <button id="restartButton">Restart</button>
+        </div>
+    </div>
+   <style>
+    /* styles.css */
+
+body {
+    background: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-container {
+    text-align: center;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+}
+
+.cell {
+    background: #444;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cell:hover {
+    background: #555;
+}
+
+.message {
+    margin-top: 20px;
+    display: none;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.message.show {
+    display: block;
+}
+
+#restartButton {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #08d9d6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#restartButton:hover {
+    background: #0bc0c1;
+}
+
+.x {
+    color: #ff2e63;
+}
+
+.circle {
+    color: #08d9d6;
+}
+
+   </style>
+   <script>
+  const cells = document.querySelectorAll('[data-cell]');
+const winningMessageElement = document.getElementById('winningMessage');
+const winningMessageTextElement = document.getElementById('winningMessageText');
+const restartButton = document.getElementById('restartButton');
+let isCircleTurn;
+
+const winningCombinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+
+startGame();
+
+restartButton.addEventListener('click', startGame);
+
+function startGame() {
+    isCircleTurn = false;
+    cells.forEach(cell => {
+        cell.classList.remove('x');
+        cell.classList.remove('circle');
+        cell.textContent = '';
+        cell.removeEventListener('click', handleClick);
+        cell.addEventListener('click', handleClick, { once: true });
+    });
+    winningMessageElement.classList.remove('show');
+}
+
+function handleClick(e) {
+    const cell = e.target;
+    const currentClass = isCircleTurn ? 'circle' : 'x';
+    placeMark(cell, currentClass);
+    if (checkWin(currentClass)) {
+        endGame(false);
+    } else if (isDraw()) {
+        endGame(true);
+    } else {
+        swapTurns();
+    }
+}
+
+function endGame(draw) {
+    if (draw) {
+        winningMessageTextElement.innerText = 'Draw!';
+    } else {
+        winningMessageTextElement.innerText = `${isCircleTurn ? "O's" : "X's"} Wins!`;
+    }
+    winningMessageElement.classList.add('show');
+}
+
+function isDraw() {
+    return [...cells].every(cell => {
+        return cell.classList.contains('x') || cell.classList.contains('circle');
+    });
+}
+
+function placeMark(cell, currentClass) {
+    cell.classList.add(currentClass);
+    cell.textContent = currentClass === 'x' ? 'X' : 'O';
+}
+
+function swapTurns() {
+    isCircleTurn = !isCircleTurn;
+}
+
+function checkWin(currentClass) {
+    return winningCombinations.some(combination => {
+        return combination.every(index => {
+            return cells[index].classList.contains(currentClass);
+        });
+    });
+}
+
+
+   </script>
+</body>
+</html>
+
 
